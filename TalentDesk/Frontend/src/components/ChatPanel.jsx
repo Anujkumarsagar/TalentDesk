@@ -4,6 +4,7 @@ import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Icon from './Icon';
+import { AIResponseParser } from 'ai-response-parser';
 
 const suggestions = [
   'How many candidates are in Interviewed for the Python Developer job?',
@@ -133,7 +134,16 @@ export default function ChatPanel({ open, onClose }) {
             </div>
             <div className={`max-w-[88%] rounded-xl px-3.5 py-2.5 text-[13px] leading-relaxed shadow-sm ${message.role === 'user' ? 'rounded-br-sm bg-brand-600 text-white' : 'rounded-bl-sm border border-slate-200 bg-white text-ink'}`}>
               {message.error && <span className="mr-1 font-bold text-rose-600">Error:</span>}
-              <span className="whitespace-pre-wrap break-words">{message.text}</span>
+              {message.role === 'assistant' && !message.error ? (
+                <AIResponseParser
+                  content={message.text}
+                  themeName="dracula"
+                  textColor="#0f172a"
+                  className="whitespace-pre-wrap break-words"
+                />
+              ) : (
+                <span className="whitespace-pre-wrap break-words">{message.text}</span>
+              )}
               {message.mode && (
                 <span className="mt-2 inline-flex rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-bold text-brand-700">
                   {message.mode === 'data' ? 'App data' : message.mode === 'docs' ? 'Documents' : 'No answer'}
